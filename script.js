@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelectorAll('.nav-link');
     let isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
 
-    // تحميل المواد من Local Storage
+    // Load subjects from Local Storage
     let subjects = JSON.parse(localStorage.getItem('subjects')) || [];
-    let currentSection = localStorage.getItem('currentSection') || '#stats-section';
+    let currentSection = localStorage.getItem('currentSection') || '#form-section';
 
     function updateSidebarState() {
         if (isSidebarCollapsed) {
@@ -29,7 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateCurrentSection() {
-        document.querySelector(currentSection).scrollIntoView({ behavior: 'smooth' });
+        const sectionElement = document.querySelector(currentSection);
+        if (sectionElement) {
+            sectionElement.scrollIntoView({ behavior: 'smooth' });
+        }
         navLinks.forEach(link => {
             if (link.getAttribute('href') === currentSection) {
                 link.classList.add('active');
@@ -112,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const thirdReviewDate = addDays(entryDate, 6);
         const fourthReviewDate = addDays(entryDate, 10);
 
-        const subject = { id, name, description, tags, entryDate, firstReviewDate, secondReviewDate, thirdReviewDate, fourthReviewDate, reviewed: false };
+        const subject = { id, name, description, tags, entryDate, firstReviewDate, secondReviewDate, thirdReviewDate, fourthReviewDate };
         subjects.push(subject);
         saveSubjects();
         displaySubjects(subjects);
@@ -131,20 +134,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="details">
                     <p>${highlightText(subject.description, query)}</p>
                     <p>Tags: ${subject.tags.map(tag => `<span class="tag">${highlightText(tag, query)}</span>`).join(', ')}</p>
-                    <p class="${isExpired(subject.entryDate) && !subject.reviewed ? 'expired-date' : ''}">Entry Date: ${new Date(subject.entryDate).toLocaleDateString()}</p>
-                    <p class="${isExpired(subject.firstReviewDate) && !subject.reviewed ? 'expired-date' : ''}">First Review: ${new Date(subject.firstReviewDate).toLocaleDateString()}</p>
-                    <p class="${isExpired(subject.secondReviewDate) && !subject.reviewed ? 'expired-date' : ''}">Second Review: ${new Date(subject.secondReviewDate).toLocaleDateString()}</p>
-                    <p class="${isExpired(subject.thirdReviewDate) && !subject.reviewed ? 'expired-date' : ''}">Third Review: ${new Date(subject.thirdReviewDate).toLocaleDateString()}</p>
-                    <p class="${isExpired(subject.fourthReviewDate) && !subject.reviewed ? 'expired-date' : ''}">Fourth Review: ${new Date(subject.fourthReviewDate).toLocaleDateString()}</p>
+                    <p class="${isExpired(subject.entryDate) ? 'expired-date' : ''}">Entry Date: ${new Date(subject.entryDate).toLocaleDateString()}</p>
+                    <p class="${isExpired(subject.firstReviewDate) ? 'expired-date' : ''}">First Review: ${new Date(subject.firstReviewDate).toLocaleDateString()}</p>
+                    <p class="${isExpired(subject.secondReviewDate) ? 'expired-date' : ''}">Second Review: ${new Date(subject.secondReviewDate).toLocaleDateString()}</p>
+                    <p class="${isExpired(subject.thirdReviewDate) ? 'expired-date' : ''}">Third Review: ${new Date(subject.thirdReviewDate).toLocaleDateString()}</p>
+                    <p class="${isExpired(subject.fourthReviewDate) ? 'expired-date' : ''}">Fourth Review: ${new Date(subject.fourthReviewDate).toLocaleDateString()}</p>
                 </div>
                 <div class="actions">
                     <button onclick="editSubject(${subject.id})"><span class="material-icons">edit</span> Edit</button>
                     <button onclick="deleteSubject(${subject.id})"><span class="material-icons">delete</span> Delete</button>
                 </div>
             `;
-            if (subject.reviewed) {
-                li.classList.add('reviewed');
-            }
             subjectsList.appendChild(li);
         });
         updateStats();
