@@ -17,7 +17,7 @@ The Spaced Repetition Study Management App is designed to help users enhance the
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/spaced-repetition-app.git
+   git clone https://github.com/MohammedTsmu/Spaced-Repetition.git
    ```
 2. Navigate to the project directory:
    ```bash
